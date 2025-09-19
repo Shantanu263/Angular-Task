@@ -1,0 +1,373 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  },
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "ddd",
+      "password": "12345"
+    },
+    {
+      "username": "shan",
+      "email": "shan@gmail.com",
+      "password": "Shan!234",
+      "confirmPassword": "Shan!234",
+      "id": 2
+    },
+    {
+      "username": "bob",
+      "email": "bob@test.com",
+      "password": "Bob!2345",
+      "confirmPassword": "Bob!2345",
+      "id": 3
+    },
+    {
+      "username": "alice",
+      "email": "alice@gmail.com",
+      "password": "Alice!234",
+      "id": 4
+    },
+    {
+      "username": "skalt",
+      "email": "skalt@gmail.com",
+      "password": "Skalt!23",
+      "id": 5
+    },
+    {
+      "username": "dummy",
+      "email": "dummy@gmail.com",
+      "password": "Dummy!234",
+      "id": 6
+    }
+  ],
+  "employees": [
+    {
+      "id": 3,
+      "username": "carol",
+      "email": "carol@example.com",
+      "organisation": "FutureWorks",
+      "role": "Engineer",
+      "updatedAt": "2025-09-19T10:47:39.696Z"
+    },
+    {
+      "id": 4,
+      "username": "dave",
+      "email": "dave@example.com",
+      "organisation": "Initech",
+      "role": "tester",
+      "updatedAt": "2025-09-18T12:06:59.019Z"
+    },
+    {
+      "id": 6,
+      "username": "frank",
+      "email": "frank@example.com",
+      "organisation": "Acme Corp",
+      "role": "Developer"
+    },
+    {
+      "id": 7,
+      "username": "grace",
+      "email": "grace@example.com",
+      "organisation": "Globex",
+      "role": "Designer"
+    },
+    {
+      "id": 8,
+      "username": "henry",
+      "email": "henry@example.com",
+      "organisation": "Initech",
+      "role": "Analyst"
+    },
+    {
+      "id": 9,
+      "username": "ivy",
+      "email": "ivy@example.com",
+      "organisation": "Wonka Industries",
+      "role": "Manager"
+    },
+    {
+      "id": 10,
+      "username": "jack",
+      "email": "jack@example.com",
+      "organisation": "Acme Corp",
+      "role": "manager",
+      "updatedAt": "2025-09-15T11:46:13.267Z"
+    },
+    {
+      "id": 11,
+      "username": "kate",
+      "email": "kate@example.com",
+      "organisation": "Globex",
+      "role": "Admin"
+    },
+    {
+      "id": 12,
+      "username": "leo",
+      "email": "leo@example.com",
+      "organisation": "Initech",
+      "role": "Engineer"
+    },
+    {
+      "id": 13,
+      "username": "maya",
+      "email": "maya@example.com",
+      "organisation": "Wonka Industries",
+      "role": "HR"
+    },
+    {
+      "id": 14,
+      "username": "nick",
+      "email": "nick@example.com",
+      "organisation": "Acme Corp",
+      "role": "Finance"
+    },
+    {
+      "id": 15,
+      "username": "olivia",
+      "email": "olivia@example.com",
+      "organisation": "Globex",
+      "role": "Developer"
+    },
+    {
+      "id": 16,
+      "username": "peter",
+      "email": "peter@example.com",
+      "organisation": "Initech",
+      "role": "Designer"
+    },
+    {
+      "id": 17,
+      "username": "quinn",
+      "email": "quinn@example.com",
+      "organisation": "Wonka Industries",
+      "role": "Analyst"
+    },
+    {
+      "id": 18,
+      "username": "rachel",
+      "email": "rachel@example.com",
+      "organisation": "Acme Corp",
+      "role": "Manager"
+    },
+    {
+      "id": 19,
+      "username": "steve",
+      "email": "steve@example.com",
+      "organisation": "Globex",
+      "role": "Tester"
+    },
+    {
+      "id": 20,
+      "username": "tina",
+      "email": "tina@example.com",
+      "organisation": "Initech",
+      "role": "Admin"
+    },
+    {
+      "id": 21,
+      "username": "umar",
+      "email": "umar@example.com",
+      "organisation": "Wonka Industries",
+      "role": "Engineer"
+    },
+    {
+      "id": 22,
+      "username": "vera",
+      "email": "vera@example.com",
+      "organisation": "Acme Corp",
+      "role": "HR"
+    },
+    {
+      "id": 23,
+      "username": "will",
+      "email": "will@example.com",
+      "organisation": "Globex",
+      "role": "Finance"
+    },
+    {
+      "id": 24,
+      "username": "xara",
+      "email": "xara@example.com",
+      "organisation": "Initech",
+      "role": "Developer"
+    },
+    {
+      "id": 25,
+      "username": "yara",
+      "email": "yara@example.com",
+      "organisation": "Wonka Industries",
+      "role": "Designer"
+    },
+    {
+      "username": "shantanu k",
+      "email": "shantanu.s.khopade@gmail.com",
+      "organisation": "FutureWorks",
+      "role": "admin",
+      "createdAt": "2025-09-15T12:33:00.059Z",
+      "updatedAt": "2025-09-18T12:14:36.436Z",
+      "id": 26
+    },
+    {
+      "username": "shantanu",
+      "email": "shantanu.s@gmail.com",
+      "organisation": "Digital Dynamics",
+      "role": "tester",
+      "createdAt": "2025-09-18T12:19:28.906Z",
+      "updatedAt": "2025-09-18T12:19:28.906Z",
+      "id": 27
+    }
+  ],
+  "roles": [
+    {
+      "id": 1,
+      "name": "admin",
+      "description": "Administrator role"
+    },
+    {
+      "id": 2,
+      "name": "user",
+      "description": "Regular user role"
+    },
+    {
+      "id": 3,
+      "name": "manager",
+      "description": "Manager role"
+    },
+    {
+      "id": 4,
+      "name": "developer",
+      "description": "Developer role"
+    },
+    {
+      "id": 5,
+      "name": "designer",
+      "description": "Designer role"
+    },
+    {
+      "id": 6,
+      "name": "tester",
+      "description": "Quality assurance role"
+    },
+    {
+      "id": 7,
+      "name": "hr",
+      "description": "Human Resources role"
+    },
+    {
+      "name": "Engineer",
+      "description": "Custom role: Engineer",
+      "id": 8
+    }
+  ],
+  "organizations": [
+    {
+      "id": 1,
+      "name": "Acme Corp",
+      "createdBy": "alice",
+      "totalMembers": 0
+    },
+    {
+      "id": 2,
+      "name": "Globex",
+      "createdBy": "carol",
+      "totalMembers": 75
+    },
+    {
+      "id": 3,
+      "name": "Initech",
+      "createdBy": "dave",
+      "totalMembers": 45
+    },
+    {
+      "id": 4,
+      "name": "Wonka Industries",
+      "createdBy": "eve",
+      "totalMembers": 300
+    },
+    {
+      "id": 6,
+      "name": "Innovation Labs",
+      "createdBy": "grace",
+      "totalMembers": 150
+    },
+    {
+      "id": 7,
+      "name": "DataFlow Systems",
+      "createdBy": "henry",
+      "totalMembers": 65
+    },
+    {
+      "id": 8,
+      "name": "CloudTech Inc",
+      "createdBy": "ivy",
+      "totalMembers": 200
+    },
+    {
+      "id": 9,
+      "name": "FutureWorks",
+      "createdBy": "jack",
+      "totalMembers": 90
+    },
+    {
+      "id": 10,
+      "name": "Digital Dynamics",
+      "createdBy": "kate",
+      "totalMembers": 110
+    },
+    {
+      "id": 11,
+      "name": "NextGen Technologies",
+      "createdBy": "leo",
+      "totalMembers": 175
+    },
+    {
+      "id": 12,
+      "name": "Smart Solutions",
+      "createdBy": "maya",
+      "totalMembers": 55
+    },
+    {
+      "id": 13,
+      "name": "Quantum Systems",
+      "createdBy": "nick",
+      "totalMembers": 130
+    },
+    {
+      "id": 14,
+      "name": "AI Innovations",
+      "createdBy": "olivia",
+      "totalMembers": 95
+    },
+    {
+      "id": 15,
+      "name": "Blockchain Corp",
+      "createdBy": "peter",
+      "totalMembers": 70
+    },
+    {
+      "name": "Cybernxt",
+      "description": "company",
+      "createdBy": "aaron",
+      "totalMembers": 0,
+      "createdAt": "2025-09-17T18:05:23.091Z",
+      "updatedAt": "2025-09-19T11:18:55.006Z",
+      "id": 16
+    }
+  ]
+}

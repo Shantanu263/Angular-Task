@@ -1,0 +1,40 @@
+{
+  "organizations": [
+    {
+      "id": 1,
+      "name": "Tech Corp",
+      "description": "Technology Corporation",
+      "createdBy": "admin",
+      "createdAt": "2025-09-18T10:00:00.000Z",
+      "updatedAt": "2025-09-18T10:00:00.000Z"
+    }
+  ],
+  "employees": [
+    {
+      "id": 1,
+      "username": "john.doe",
+      "email": "john.doe@example.com",
+      "organisation": "Tech Corp",
+      "role": "admin",
+      "createdAt": "2025-09-18T10:00:00.000Z",
+      "updatedAt": "2025-09-18T10:00:00.000Z"
+    }
+  ],
+  "roles": [
+    {
+      "id": 1,
+      "name": "admin",
+      "description": "Administrator role"
+    },
+    {
+      "id": 2,
+      "name": "user",
+      "description": "Regular user role"
+    },
+    {
+      "id": 3,
+      "name": "manager",
+      "description": "Manager role"
+    }
+  ]
+}

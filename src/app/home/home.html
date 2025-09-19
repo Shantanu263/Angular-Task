@@ -1,0 +1,408 @@
+<!-- Include this script tag or install `@tailwindplus/elements` via npm: -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> -->
+<nav class="relative bg-[#800000] after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-white/10">
+  <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <div class="relative flex h-16 items-center justify-between">
+      <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+        <!-- Mobile menu button-->
+        <button type="button" command="--toggle" commandfor="mobile-menu" class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white focus:outline-2 focus:-outline-offset-1 focus:outline-indigo-500">
+          <span class="absolute -inset-0.5"></span>
+          <span class="sr-only">Open main menu</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6 in-aria-expanded:hidden">
+            <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6 not-in-aria-expanded:hidden">
+            <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+        <div class="flex shrink-0 items-center">
+          <img src="companyLogo.png" alt="Your Company" class="h-8 w-auto" />
+        </div>
+        <div class="hidden sm:ml-6 sm:block">
+          <div class="flex space-x-4">
+            <button 
+              (click)="openEmployees()" 
+              [class]="!showOrganizations() 
+                ? 'rounded-md px-3 py-2 text-sm font-medium text-white bg-gray-950/50' 
+                : 'rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white'"
+            >
+              Employees
+            </button>
+            <button 
+              (click)="openOrganizations()" 
+              [class]="showOrganizations() 
+                ? 'rounded-md px-3 py-2 text-sm font-medium text-white bg-gray-950/50' 
+                : 'rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white'"
+            >
+              Organizations
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+        <button type="button" class="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500">
+          <span class="absolute -inset-1.5"></span>
+          <span class="sr-only">View notifications</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6">
+            <path d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <!-- Profile dropdown -->
+        <el-dropdown class="relative ml-3">
+          <button class="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+            <span class="absolute -inset-1.5"></span>
+            <span class="sr-only">Open user menu</span>
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10" />
+          </button>
+
+          <el-menu anchor="bottom end" popover class="w-48 origin-top-right rounded-md bg-white py-1 shadow-lg z-50 transition [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in">
+            <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 focus:bg-white/5 focus:outline-hidden">Your profile</a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 focus:bg-white/5 focus:outline-hidden">Settings</a>
+            <a href="#" (click)="logout()" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 focus:bg-white/5 focus:outline-hidden">Sign out</a>
+          </el-menu>
+        </el-dropdown>
+      </div>
+    </div>
+  </div>
+
+  <el-disclosure id="mobile-menu" hidden class="block sm:hidden">
+    <div class="space-y-1 px-2 pt-2 pb-3">
+      <!-- Current: "bg-gray-950/50 text-white", Default: "text-gray-300 hover:bg-white/5 hover:text-white" -->
+      <a href="#" aria-current="page" class="block rounded-md bg-gray-950/50 px-3 py-2 text-base font-medium text-white">Dashboard</a>
+      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white">Team</a>
+      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white">Projects</a>
+      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white">Calendar</a>
+    </div>
+  </el-disclosure>
+</nav>
+
+@if (!showOrganizations()) {
+<main class="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+  <section class="bg-white rounded-xl shadow-sm ring-1 ring-gray-200">
+<div class="px-4 py-7 sm:px-6 flex items-center justify-between">
+  <div class="flex items-center space-x-4">
+    <h2 class="text-xl font-semibold text-gray-900">Employees</h2>
+    <button
+      (click)="addEmployee()"
+      class="px-3 py-2 text-sm font-medium text-white bg-red-900 rounded-md hover:bg-black"
+    >
+      Add Employee
+    </button>
+  </div>
+
+  <div class="flex items-center space-x-4">
+    <input 
+      type="text" 
+      placeholder="Search employees..." 
+      class="w-64 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      [value]="empSearch()"
+      (input)="onEmpSearch($event)"
+    />
+    <select 
+      class="w-40 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      (change)="onEmpPageSizeChange($event)"
+    >
+      <option value="5" [selected]="empPageSize() === 5">5 per page</option>
+      <option value="10" [selected]="empPageSize() === 10">10 per page</option>
+      <option value="20" [selected]="empPageSize() === 20">20 per page</option>
+    </select>
+  </div>
+</div>
+
+    <div class="px-4 pb-6 sm:px-6">
+      @if (error()) {
+        <div class="text-red-600 text-sm mb-4">{{ error() }}</div>
+      }
+      @if (employees()?.length) {
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th 
+                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  (click)="onEmpSort('username')"
+                >
+                  <div class="flex items-center">
+                    Username
+                    @if (empSortBy() === 'username') {
+                      <span class="ml-1">{{ empSortOrder() === 'asc' ? '↑' : '↓' }}</span>
+                    }
+                  </div>
+                </th>
+                <th 
+                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  (click)="onEmpSort('email')"
+                >
+                  <div class="flex items-center">
+                    Email
+                    @if (empSortBy() === 'email') {
+                      <span class="ml-1">{{ empSortOrder() === 'asc' ? '↑' : '↓' }}</span>
+                    }
+                  </div>
+                </th>
+                <th 
+                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  (click)="onEmpSort('organisation')"
+                >
+                  <div class="flex items-center">
+                    Organisation
+                    @if (empSortBy() === 'organisation') {
+                      <span class="ml-1">{{ empSortOrder() === 'asc' ? '↑' : '↓' }}</span>
+                    }
+                  </div>
+                </th>
+                <th 
+                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  (click)="onEmpSort('role')"
+                >
+                  <div class="flex items-center">
+                    Role
+                    @if (empSortBy() === 'role') {
+                      <span class="ml-1">{{ empSortOrder() === 'asc' ? '↑' : '↓' }}</span>
+                    }
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+    <tbody class="bg-white divide-y divide-gray-100">
+      @for (emp of employees()!; track emp.email) {
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-3 text-sm text-gray-900 font-medium">{{ emp.username }}</td>
+          <td class="px-4 py-3 text-sm text-gray-700">{{ emp.email }}</td>
+          <td class="px-4 py-3 text-sm text-gray-700">{{ emp.organisation }}</td>
+          <td class="px-4 py-3 text-sm">
+            <span class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
+              {{ emp.role }}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-sm">
+            <div class="flex items-center justify-end space-x-2">
+              <button (click)="editEmployee(emp)" class="text-indigo-600 hover:text-indigo-900">Edit</button>
+              <button (click)="deleteEmployee(emp)" class="text-red-600 hover:text-red-900">Delete</button>
+            </div>
+          </td>
+        </tr>
+      }
+
+      @for (_ of fillerRows; track $index) {
+        <tr>
+          <td colspan="5" class="px-4 py-3">&nbsp;</td>
+        </tr>
+      }
+    </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="flex items-center justify-between mt-6">
+          <div class="text-sm text-gray-700">
+            Showing {{ empPaginationInfo().startItem }} to {{ empPaginationInfo().endItem }} of {{ empPaginationInfo().totalItems }} results
+          </div>
+          <div class="flex items-center space-x-2">
+            <button 
+              (click)="onEmpPageChange(empCurrentPage() - 1)"
+              [disabled]="empCurrentPage() <= 1"
+              class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            
+            @for (page of empPageNumbers(); track page) {
+              <button 
+                (click)="onEmpPageChange(page)"
+                [class]="page === empCurrentPage() 
+                  ? 'px-3 py-2 text-sm font-medium text-white bg-red-900 border border-red-900 rounded-md' 
+                  : 'px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'"
+              >
+                {{ page }}
+              </button>
+            }
+            
+            <button 
+              (click)="onEmpPageChange(empCurrentPage() + 1)"
+              [disabled]="empCurrentPage() >= empTotalPages()"
+              class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      } @else {
+        <p class="text-sm text-gray-500">No employees found.</p>
+      }
+    </div>
+  </section>
+</main>
+} @else {
+<main class="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+  <section class="bg-white rounded-xl shadow-sm ring-1 ring-gray-200">
+     <div class="px-4 py-7 sm:px-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <!-- Left: Title + Add button -->
+      <div class="flex items-center gap-4">
+        <h2 class="text-xl font-semibold text-gray-900">Organizations</h2>
+        <button
+          type="button"
+          (click)="addOrganization()"
+          class="px-3 py-2 text-sm font-medium text-white bg-red-900 rounded-md hover:bg-black"
+        >
+          Add Organization
+        </button>
+      </div>
+
+      <!-- Right: Search + Page size -->
+      <div class="flex items-center gap-4">
+        <input
+          type="text"
+          placeholder="Search organizations..."
+          (input)="onOrgSearch($event)"
+          class="w-64 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+
+        <select
+          (change)="onOrgPageSizeChange($event)"
+          class="w-40 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          <option value="5" [selected]="orgPageSize() === 5">5 per page</option>
+          <option value="10" [selected]="orgPageSize() === 10">10 per page</option>
+          <option value="20" [selected]="orgPageSize() === 20">20 per page</option>
+        </select>
+    </div>
+    </div>
+    <div class="px-4 pb-6 sm:px-6">
+      @if (orgError()) {
+        <div class="text-red-600 text-sm mb-4">{{ orgError() }}</div>
+      }
+      @if (organizations()?.length) {
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th 
+                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  (click)="onOrgSort('id')"
+                >
+                  <div class="flex items-center">
+                    ID
+                    @if (orgSortBy() === 'id') {
+                      <span class="ml-1">{{ orgSortOrder() === 'asc' ? '↑' : '↓' }}</span>
+                    }
+                  </div>
+                </th>
+                <th 
+                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  (click)="onOrgSort('name')"
+                >
+                  <div class="flex items-center">
+                    Name
+                    @if (orgSortBy() === 'name') {
+                      <span class="ml-1">{{ orgSortOrder() === 'asc' ? '↑' : '↓' }}</span>
+                    }
+                  </div>
+                </th>
+                <th 
+                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  (click)="onOrgSort('createdBy')"
+                >
+                  <div class="flex items-center">
+                    Created By
+                    @if (orgSortBy() === 'createdBy') {
+                      <span class="ml-1">{{ orgSortOrder() === 'asc' ? '↑' : '↓' }}</span>
+                    }
+                  </div>
+                </th>
+                <th 
+                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  (click)="onOrgSort('totalMembers')"
+                >
+                  <div class="flex items-center">
+                    Total Members
+                    @if (orgSortBy() === 'totalMembers') {
+                      <span class="ml-1">{{ orgSortOrder() === 'asc' ? '↑' : '↓' }}</span>
+                    }
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+              @for (org of organizations()!; track org.id) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-sm text-gray-900 font-medium">{{ org.id }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">{{ org.name }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">{{ org.createdBy }}</td>
+                  <td class="px-4 py-3 text-sm">
+                    <span class="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">{{ org.totalMembers }}</span>
+                  </td>
+                  <td class="px-4 py-3 text-sm">
+                    <div class="flex items-center justify-end space-x-2">
+                      <button
+                        (click)="editOrganization(org)"
+                        class="text-indigo-600 hover:text-indigo-900"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        (click)="deleteOrganization(org)"
+                        class="text-red-600 hover:text-red-900"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="flex items-center justify-between mt-6">
+          <div class="text-sm text-gray-700">
+            Showing {{ orgPaginationInfo().startItem }} to {{ orgPaginationInfo().endItem }} of {{ orgPaginationInfo().totalItems }} results
+          </div>
+          <div class="flex items-center space-x-2">
+            <button 
+              (click)="onOrgPageChange(orgCurrentPage() - 1)"
+              [disabled]="orgCurrentPage() <= 1"
+              class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            
+            @for (page of orgPageNumbers(); track page) {
+              <button 
+                (click)="onOrgPageChange(page)"
+                [class]="page === orgCurrentPage() 
+                  ? 'px-3 py-2 text-sm font-medium text-white bg-red-900 border border-red-900 rounded-md' 
+                  : 'px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'"
+              >
+                {{ page }}
+              </button>
+            }
+            
+            <button 
+              (click)="onOrgPageChange(orgCurrentPage() + 1)"
+              [disabled]="orgCurrentPage() >= orgTotalPages()"
+              class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      } @else {
+        <p class="text-sm text-gray-500">No organizations found.</p>
+      }
+    </div>
+  </section>
+</main>
+}
+
+ 
