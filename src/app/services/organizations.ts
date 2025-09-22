@@ -60,7 +60,7 @@ export class OrganizationsService {
   getOrganizationsPaginated(params: PaginationParams = {}): Observable<OrganizationResponse> {
     let httpParams = new HttpParams();
 
-    // pagination - only apply if not sorting by totalMembers
+    // pagination 
     if (params.sortBy !== 'totalMembers') {
       if (params.page !== undefined) {
         httpParams = httpParams.set('_page', params.page.toString());
@@ -70,7 +70,7 @@ export class OrganizationsService {
       }
     }
 
-    // sorting - only apply server-side sort if not sorting by totalMembers
+    // sorting
     if (params.sortBy && params.sortBy !== 'totalMembers') {
       httpParams = httpParams.set('_sort', params.sortBy);
       if (params.sortOrder) {
@@ -95,7 +95,6 @@ export class OrganizationsService {
         const pageSize = params.pageSize || 10;
         const totalPages = Math.ceil(total / pageSize);
         
-        // Update each organization with its actual member count
         const organizationsWithCounts$ = organizations.map(org => 
           this.getOrganizationMemberCount(org.name).pipe(
             map(count => ({
@@ -107,7 +106,7 @@ export class OrganizationsService {
 
         return forkJoin(organizationsWithCounts$).pipe(
           map(updatedOrgs => {
-            // If sorting by totalMembers, sort the data client-side
+            
             if (params.sortBy === 'totalMembers') {
               const sortedOrgs = [...updatedOrgs].sort((a, b) => {
                 return params.sortOrder === 'asc' 

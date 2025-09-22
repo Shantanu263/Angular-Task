@@ -45,7 +45,7 @@ import { MatError } from '@angular/material/form-field';
           </mat-error>
         </mat-form-field>
 
-        <!-- Action Buttons -->
+        <!--Buttons -->
         <div class="flex justify-end space-x-3 pt-4">
           <button
             type="button"
