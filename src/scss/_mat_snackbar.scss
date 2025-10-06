@@ -1,65 +1,42 @@
+/* Base colors */
 .snackbar-success,
 .snackbar-error {
-    /* Ensure the action button text is visible */
     --mat-mdc-snack-bar-button-color: white;
-
-    .mat-mdc-snack-bar-action {
-        background-color: rgba(white, 0.2);
-    }
 }
 
-/* Fix the position to be right below navbar */
-::ng-deep .fixed-under-navbar {
-    position: fixed !important;
-    top: 64px !important; /* Height of the navbar */
-    width: 100% !important;
-    margin: 0 !important;
-}
+/* Stable position just under navbar */
+// ::ng-deep .fixed-under-navbar {
+//     position: fixed !important;
+//     top: 64px !important; /* match navbar height for desktop */
+//     left: 0 !important;
+//     right: 0 !important;
+//     width: 100% !important;
+//     margin: 0 !important;
+//     z-index: 1000;
+// }
 
-/* Position styling for snackbar */
+/* Ensure container doesn't add offset */
 ::ng-deep .mat-mdc-snack-bar-container {
     position: relative !important;
     margin-top: 0 !important;
 }
 
-::ng-deep .fixed-under-navbar {
-    position: fixed !important;
-    top: 64px !important; /* Height of the navbar */
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    z-index: 1000;
-}
-
-/* Target the actual snackbar container element that receives panelClass */
+/* Themed containers */
 ::ng-deep .mat-mdc-snack-bar-container.snackbar-success {
-    --mdc-snackbar-container-color: #4caf50 !important;
+    --mdc-snackbar-container-color: #166534 !important; /* dark green */
     --mdc-snackbar-supporting-text-color: white !important;
     --mdc-text-button-label-text-color: white !important;
-
-    .mat-mdc-snack-bar-label {
-        color: var(--mdc-snackbar-supporting-text-color);
-    }
-
-    .mat-mdc-snack-bar-action {
-        color: var(--mdc-text-button-label-text-color);
-    }
 }
 
 ::ng-deep .mat-mdc-snack-bar-container.snackbar-error {
-    --mdc-snackbar-container-color: #f44336 !important;
+    --mdc-snackbar-container-color: #991b1b !important; /* dark red */
     --mdc-snackbar-supporting-text-color: white !important;
     --mdc-text-button-label-text-color: white !important;
+}
 
-    .mat-mdc-snack-bar-label {
-        color: var(--mdc-snackbar-supporting-text-color);
-    }
-
-    ::ng-deep .mat-mdc-snack-bar-action {
-        color: var(--mdc-text-button-label-text-color);
-    }
-
-    .snackbar-below-navbar {
-        top: 32px !important;    
-    }
+/* Adjust offset for small screens where navbar is taller/stacked */
+@media (max-width: 640px) {
+  ::ng-deep .fixed-under-navbar {
+      top: 56px !important;
+  }
 }

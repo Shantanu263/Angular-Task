@@ -5,5 +5,12 @@
     "changeOrigin": true,
     "logLevel": "debug",
     "pathRewrite": { "^/api": "" }
+  },
+  "/grafana": {
+    "target": "http://localhost:8081/grafana",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": { "^/grafana": "" }
   }
 }

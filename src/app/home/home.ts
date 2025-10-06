@@ -1,7 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth';
-import { Observable, of } from 'rxjs';
+import { Observable, of, forkJoin } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { EmployeesService } from '../services/employees';
@@ -11,8 +11,11 @@ import { Organization, PaginationParams as OrgPaginationParams, CreateOrganizati
 import { EmployeeDialogComponent } from '../components/employee-dialog/employee-dialog';
 import { OrganizationDialogComponent } from '../components/organization-dialog/organization-dialog';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog';
+import { EmployeeDetailDialogComponent } from '../components/employee-detail-dialog/employee-detail-dialog';
+import { OrganizationUsersDialogComponent } from '../components/organization-users-dialog/organization-users-dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NotificationService, ActivityItem } from '../services/notifications';
 
 
 @Component({
@@ -34,6 +37,7 @@ export class HomeComponent implements OnInit {
   private router = inject(Router);
   private employeesService = inject(EmployeesService);
   private organizationsService = inject(OrganizationsService);
+  notificationService = inject(NotificationService);
   message:Observable<string> = of('');
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
@@ -45,12 +49,13 @@ export class HomeComponent implements OnInit {
   orgError = signal<string | null>(null);
   showOrganizations = signal<boolean>(false);
   activeTab: 'employees' | 'organizations' = 'employees';
+  activities = signal<ActivityItem[]>([]);
 
 
   // employee- Pagination, sorting state 
   empCurrentPage = signal<number>(1);
   empPageSize = signal<number>(5);
-  empSortBy = signal<string>('username');
+  empSortBy = signal<string>('name');
   empSortOrder = signal<'asc' | 'desc'>('asc');
   empSearch = signal<string>('');
   empTotalPages = signal<number>(0);
@@ -109,6 +114,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadEmployees();
+    this.notificationService.activities$.subscribe(items => this.activities.set(items));
   }
 
   loadEmployees(): void {
@@ -120,6 +126,7 @@ export class HomeComponent implements OnInit {
       sortOrder: this.empSortOrder(),
       search: this.empSearch()
     };
+    console.log(this.empCurrentPage())
 
     this.employeesService.getEmployeesPaginated(params).subscribe({
       next: response => {
@@ -139,7 +146,7 @@ export class HomeComponent implements OnInit {
     // Reset employee search state when switching to organizations
     this.empSearch.set('');
     this.empCurrentPage.set(1);
-    this.empSortBy.set('username');
+    this.empSortBy.set('name');
     this.empSortOrder.set('asc');
     
     this.showOrganizations.set(true);
@@ -263,6 +270,8 @@ export class HomeComponent implements OnInit {
   addEmployee(): void {
     const dialogRef = this.dialog.open(EmployeeDialogComponent, {
       width: '500px',
+      maxWidth: '95vw',
+      panelClass: 'responsive-dialog',
       data: {
         mode: 'add',
         title: 'Add Employee'
@@ -275,10 +284,15 @@ export class HomeComponent implements OnInit {
         this.employeesService.createEmployee(result.data).subscribe({
           next: () => {
             this.showNotification('Employee added successfully');
+            this.notificationService.addActivity({
+              entity: 'User',
+              action: 'Created',
+              title: 'New user created',
+              description: `${result.data.name} (${result.data.email})`
+            });
             this.loadEmployees();
           },
           error: () => {
-            this.showNotification('Failed to add employee', true);
             this.loading.set(false);
           }
         });
@@ -287,38 +301,78 @@ export class HomeComponent implements OnInit {
   }
 
   editEmployee(employee: Employee): void {
+    // Ensure we have all the required fields mapped correctly
+    const dialogData = {
+      ...employee,
+      // Map organization fields correctly
+      OrgId: typeof employee.OrgId === 'number' ? employee.OrgId : employee.id,
+    };
+
     const dialogRef = this.dialog.open(EmployeeDialogComponent, {
       width: '500px',
+      maxWidth: '95vw',
+      panelClass: 'responsive-dialog',
       data: {
         mode: 'edit',
         title: 'Edit Employee',
-        data: employee
+        data: dialogData
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.action === 'save' && employee.id) {
         this.loading.set(true);
-        this.employeesService.updateEmployee(employee.id, result.data).subscribe({
-          next: () => {
-            this.showNotification('Employee updated successfully');
-            this.loadEmployees();
-          },
-          error: () => {
-            this.showNotification('Failed to update employee', true);
-            this.loading.set(false);
-          }
-        });
+        
+        const updates = result.data;
+        
+        // Create promises for both updates
+        const updatePromises: Observable<any>[] = [];
+        
+        // Basic info update - send all fields even if they haven't changed
+        const basicInfo = {
+          name: updates.name,
+          email: updates.email,
+          login: updates.login
+        };
+        updatePromises.push(this.employeesService.updateEmployee(employee.id, basicInfo));
+        
+        // Role update (only if changed)
+        if (updates.role !== employee.role && updates.OrgId) {
+          updatePromises.push(this.employeesService.updateEmployeeRole(employee.id, updates.OrgId, updates.role));
+        }
+        
+        // Execute all updates
+        if (updatePromises.length > 0) {
+          forkJoin(updatePromises).subscribe({
+            next: () => {
+              this.showNotification('Employee updated successfully');
+              this.notificationService.addActivity({
+                entity: 'User',
+                action: 'Updated',
+                title: 'User updated',
+                description: `${employee.name}`
+              });
+              this.loadEmployees();
+            },
+            error: () => {
+              this.loading.set(false);
+            }
+          });
+        } else {
+          this.loading.set(false);
+        }
       }
     });
   }
 
   deleteEmployee(employee: Employee): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
+      width: '420px',
+      maxWidth: '90vw',
+      panelClass: 'responsive-dialog',
       data: {
         title: 'Delete Employee',
-        message: `Are you sure you want to delete ${employee.username}?`
+        message: `Are you sure you want to delete ${employee.name}?`
       }
     });
 
@@ -328,10 +382,15 @@ export class HomeComponent implements OnInit {
         this.employeesService.deleteEmployee(employee.id).subscribe({
           next: () => {
             this.showNotification('Employee deleted successfully');
+            this.notificationService.addActivity({
+              entity: 'User',
+              action: 'Deleted',
+              title: 'User deleted',
+              description: `${employee.name}`
+            });
             this.loadEmployees();
           },
           error: () => {
-            this.showNotification('Failed to delete employee', true);
             this.loading.set(false);
           }
         });
@@ -343,6 +402,8 @@ export class HomeComponent implements OnInit {
   addOrganization(): void {
     const dialogRef = this.dialog.open(OrganizationDialogComponent, {
       width: '500px',
+      maxWidth: '95vw',
+      panelClass: 'responsive-dialog',
       data: {
         mode: 'add',
         title: 'Add Organization'
@@ -355,10 +416,15 @@ export class HomeComponent implements OnInit {
         this.organizationsService.createOrganization(result.data).subscribe({
           next: () => {
             this.showNotification('Organization added successfully');
+            this.notificationService.addActivity({
+              entity: 'Organization',
+              action: 'Created',
+              title: 'Organization created',
+              description: `${result.data.name}`
+            });
             this.loadOrganizations();
           },
           error: () => {
-            this.showNotification('Failed to add organization', true);
             this.orgLoading.set(false);
           }
         });
@@ -369,6 +435,8 @@ export class HomeComponent implements OnInit {
   editOrganization(organization: Organization): void {
     const dialogRef = this.dialog.open(OrganizationDialogComponent, {
       width: '500px',
+      maxWidth: '95vw',
+      panelClass: 'responsive-dialog',
       data: {
         mode: 'edit',
         title: 'Edit Organization',
@@ -382,10 +450,15 @@ export class HomeComponent implements OnInit {
         this.organizationsService.updateOrganization(organization.id, result.data).subscribe({
           next: () => {
             this.showNotification('Organization updated successfully');
+            this.notificationService.addActivity({
+              entity: 'Organization',
+              action: 'Updated',
+              title: 'Organization updated',
+              description: `${organization.name}`
+            });
             this.loadOrganizations();
           },
           error: () => {
-            this.showNotification('Failed to update organization', true);
             this.orgLoading.set(false);
           }
         });
@@ -395,7 +468,9 @@ export class HomeComponent implements OnInit {
 
   deleteOrganization(organization: Organization): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
+      width: '420px',
+      maxWidth: '90vw',
+      panelClass: 'responsive-dialog',
       data: {
         title: 'Delete Organization',
         message: `Are you sure you want to delete ${organization.name}?`
@@ -408,10 +483,15 @@ export class HomeComponent implements OnInit {
         this.organizationsService.deleteOrganization(organization.id).subscribe({
           next: () => {
             this.showNotification('Organization deleted successfully');
+            this.notificationService.addActivity({
+              entity: 'Organization',
+              action: 'Deleted',
+              title: 'Organization deleted',
+              description: `${organization.name}`
+            });
             this.loadOrganizations();
           },
           error: () => {
-            this.showNotification('Failed to delete organization', true);
             this.orgLoading.set(false);
           }
         });
@@ -424,12 +504,41 @@ export class HomeComponent implements OnInit {
     return Array.from({ length: count });
   }
 
+  // Organization users view
+  viewOrganizationUsers(organization: Organization): void {
+    this.dialog.open(OrganizationUsersDialogComponent, {
+      panelClass: 'responsive-dialog',
+      data: {
+        organization: organization
+      }
+    });
+  }
+
+  // Employee detail view
+  viewEmployeeDetails(employee: Employee): void {
+    const dialogRef = this.dialog.open(EmployeeDetailDialogComponent, {
+      width: '800px',
+      maxWidth: '95vw',
+      panelClass: 'responsive-dialog',
+      data: {
+        employee: employee
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Refresh employee list if any changes were made
+      if (result?.refreshed) {
+        this.loadEmployees();
+      }
+    });
+  }
+
   private showNotification(message: string, isError: boolean = false): void {
     this.snackBar.open(message, 'Close', {
       duration: 3000,
       //verticalPosition: 'top',
       horizontalPosition: 'center',
-      panelClass: [isError ? 'snackbar-error' : 'snackbar-success', 'fixed-under-navbar', 'snackbar-below-navbar']
+      panelClass: [isError ? 'snackbar-error' : 'snackbar-success', 'fixed-under-navbar']
     });
   }
 }

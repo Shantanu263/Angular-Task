@@ -6,7 +6,7 @@ import { Role, RoleResponse, PaginationParams, CreateRoleDto, UpdateRoleDto } fr
 
 @Injectable({ providedIn: 'root' })
 export class RolesService {
-  private apiUrl = 'http://localhost:3000/roles';
+  private apiUrl = 'http://localhost:8000/roles';
 
   constructor(private http: HttpClient) {}
 

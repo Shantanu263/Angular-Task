@@ -25,26 +25,6 @@ import { MatError } from '@angular/material/form-field';
           </mat-error>
         </mat-form-field>
 
-        <!-- Description -->
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label>Description</mat-label>
-          <textarea
-            matInput
-            formControlName="description"
-            rows="3"
-            placeholder="Enter description"
-          ></textarea>
-        </mat-form-field>
-
-        <!-- Created By -->
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label>Created By</mat-label>
-          <input matInput formControlName="createdBy" placeholder="Enter creator name" />
-          <mat-error *ngIf="organizationForm.get('createdBy')?.invalid && organizationForm.get('createdBy')?.touched">
-            Creator name is required
-          </mat-error>
-        </mat-form-field>
-
         <!--Buttons -->
         <div class="flex justify-end space-x-3 pt-4">
           <button
@@ -85,9 +65,7 @@ export class OrganizationDialogComponent implements OnInit {
   data: DialogData<Organization> = inject(MAT_DIALOG_DATA);
 
   organizationForm: FormGroup = this.formBuilder.group({
-    name: ['', Validators.required],
-    description: [''],
-    createdBy: ['', Validators.required]
+    name: ['', Validators.required]
   });
 
   ngOnInit(): void {

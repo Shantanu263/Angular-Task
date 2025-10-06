@@ -2,18 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { Organization, OrganizationResponse, PaginationParams, CreateOrganizationDto, UpdateOrganizationDto } from '../interfaces/Organization';
+import { Organization, OrganizationResponse, PaginationParams, CreateOrganizationDto, UpdateOrganizationDto, OrganizationUser } from '../interfaces/Organization';
 import { Employee } from '../interfaces/Employee';
 
 @Injectable({ providedIn: 'root' })
 export class OrganizationsService {
-  private apiUrl = 'http://localhost:3000/organizations';
+  private apiUrl = 'http://localhost:8000/organizations';
 
   constructor(private http: HttpClient) {}
 
   // CRUD 
   createOrganization(organization: CreateOrganizationDto): Observable<Organization> {
-    return this.http.post<Organization>(this.apiUrl, {
+    return this.http.post<Organization>('/grafana/createOrg', {
       ...organization,
       totalMembers: 0,
       createdAt: new Date().toISOString(),
@@ -22,30 +22,32 @@ export class OrganizationsService {
   }
 
   updateOrganization(id: number, organization: UpdateOrganizationDto): Observable<Organization> {
-    return this.http.patch<Organization>(`${this.apiUrl}/${id}`, {
+    return this.http.put<Organization>(`/grafana/update/org/${id}`, {
       ...organization,
       updatedAt: new Date().toISOString()
     });
   }
 
   deleteOrganization(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`/grafana/deleteOrg/${id}`);
   }
 
   getOrganization(id: number): Observable<Organization> {
     return this.http.get<Organization>(`${this.apiUrl}/${id}`);
   }
 
-  getOrganizationMemberCount(organizationName: string): Observable<number> {
-    return this.http.get<Employee[]>('http://localhost:3000/employees', {
-      params: new HttpParams().set('organisation', organizationName)
-    }).pipe(
-      map(employees => employees.length)
+  getOrganizationUsers(orgId: number): Observable<OrganizationUser[]> {
+    return this.http.get<OrganizationUser[]>(`/grafana/org/${orgId}/users`);
+  }
+
+  getOrganizationMemberCount(orgId: number): Observable<number> {
+    return this.getOrganizationUsers(orgId).pipe(
+      map(users => users.length)
     );
   }
 
   updateOrganizationWithMemberCount(org: Organization): Observable<Organization> {
-    return this.getOrganizationMemberCount(org.name).pipe(
+    return this.getOrganizationMemberCount(org.id).pipe(
       map(count => ({
         ...org,
         totalMembers: count
@@ -63,40 +65,38 @@ export class OrganizationsService {
     // pagination 
     if (params.sortBy !== 'totalMembers') {
       if (params.page !== undefined) {
-        httpParams = httpParams.set('_page', params.page.toString());
+        httpParams = httpParams.set('page', params.page.toString());
       }
       if (params.pageSize !== undefined) {
-        httpParams = httpParams.set('_limit', params.pageSize.toString());
+        httpParams = httpParams.set('limit', params.pageSize.toString());
       }
     }
 
     // sorting
     if (params.sortBy && params.sortBy !== 'totalMembers') {
-      httpParams = httpParams.set('_sort', params.sortBy);
+      httpParams = httpParams.set('sortBy', params.sortBy);
       if (params.sortOrder) {
-        httpParams = httpParams.set('_order', params.sortOrder);
+        httpParams = httpParams.set('order', params.sortOrder);
       }
     }
 
     // search 
     if (params.search) {
-      httpParams = httpParams.set('q', params.search);
+      httpParams = httpParams.set('search', params.search);
     }
 
-    return this.http.get<Organization[]>(this.apiUrl, { 
-      params: httpParams,
-      observe: 'response'
+    return this.http.get<{ orgs: Organization[]; totalCount: number }>('/grafana/orgs', { 
+      params: httpParams
     }).pipe(
       map(response => {
-        const organizations = response.body || [];
-        const totalHeader = response.headers.get('X-Total-Count');
-        const total = totalHeader ? parseInt(totalHeader, 10) : organizations.length;
+        const organizations = response.orgs;
+        const total = response.totalCount;
         const page = params.page || 1;
         const pageSize = params.pageSize || 10;
         const totalPages = Math.ceil(total / pageSize);
         
         const organizationsWithCounts$ = organizations.map(org => 
-          this.getOrganizationMemberCount(org.name).pipe(
+          this.getOrganizationMemberCount(org.id).pipe(
             map(count => ({
               ...org,
               totalMembers: count

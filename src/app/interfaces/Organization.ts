@@ -27,5 +27,19 @@ export interface PaginationParams {
   search?: string;
 }
 
-
-
+export interface OrganizationUser {
+  orgId: number;
+  userId: number;
+  uid: string;
+  email: string;
+  name: string;
+  avatarUrl: string;
+  login: string;
+  role: string;
+  lastSeenAt: string;
+  lastSeenAtAge: string;
+  isDisabled: boolean;
+  authLabels: any;
+  isExternallySynced: boolean;
+  isProvisioned: boolean;
+}

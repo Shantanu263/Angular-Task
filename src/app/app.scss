@@ -1,0 +1,15 @@
+::ng-deep .cdk-overlay-container .fixed-under-navbar {
+  position: fixed !important;
+  top: 69px !important; /* height of navbar */
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  z-index: 1000 !important;
+}
+
+::ng-deep .mat-mdc-snack-bar-container.cdk-overlay-container .snackbar-success {
+  --mdc-snackbar-container-color: #166534 !important; /* dark green */
+  --mdc-snackbar-supporting-text-color: white !important;
+  --mdc-text-button-label-text-color: white !important;
+}

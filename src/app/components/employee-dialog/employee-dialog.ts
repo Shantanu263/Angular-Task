@@ -5,7 +5,7 @@ import { DialogData } from '../../interfaces/Dialog';
 import { Employee, EmployeeRole } from '../../interfaces/Employee';
 import { Organization } from '../../interfaces/Organization';
 import { OrganizationsService } from '../../services/organizations';
-import { RolesService } from '../../services/roles';
+
 import { Role } from '../../interfaces/Role';
 import { CommonModule} from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
@@ -22,12 +22,12 @@ import { MatSelect } from '@angular/material/select';
       <h2 class="text-xl font-semibold mb-4">{{ data.title }}</h2>
       <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="space-y-4">
 
-  <!-- Username -->
+  <!-- Name -->
   <mat-form-field appearance="fill" class="w-full">
-    <mat-label>Username</mat-label>
-    <input matInput formControlName="username" placeholder="Enter username" />
-    <mat-error *ngIf="employeeForm.get('username')?.invalid && employeeForm.get('username')?.touched">
-      Username is required
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" placeholder="Enter name" />
+    <mat-error *ngIf="employeeForm.get('name')?.invalid && employeeForm.get('name')?.touched">
+      Name is required
     </mat-error>
   </mat-form-field>
 
@@ -40,54 +40,25 @@ import { MatSelect } from '@angular/material/select';
     </mat-error>
   </mat-form-field>
 
-  <!-- Organization -->
+  <!-- Login -->
   <mat-form-field appearance="fill" class="w-full">
-    <mat-label>Organization</mat-label>
-    <mat-select formControlName="organisation" panelClass="org-select-panel">
-      @for (org of organizations(); track org.id) {
-        <mat-option [value]="org.name">{{ org.name }}</mat-option>
-      }
-    </mat-select>
-    <mat-error *ngIf="employeeForm.get('organisation')?.invalid && employeeForm.get('organisation')?.touched">
-      Organization is required
+    <mat-label>Login</mat-label>
+    <input matInput formControlName="login" placeholder="Enter login username" />
+    <mat-error *ngIf="employeeForm.get('login')?.invalid && employeeForm.get('login')?.touched">
+      Login is required
     </mat-error>
   </mat-form-field>
 
-  <!-- Role -->
-  <mat-form-field appearance="fill" class="w-full">
-    <mat-label>Role</mat-label>
-    <mat-select formControlName="role" panelClass="custom-role-panel">
-      <div class="roles-container">
-        @for (role of roles(); track role.id) {
-          <mat-option [value]="role.name">{{ role.name }}</mat-option>
-        }
-      </div>
-      <div class="add-role-section">
-        <div class="flex gap-2">
-          <input
-            #newRoleInput
-            type="text"
-            [ngModel]="newRole()"
-            (ngModelChange)="newRole.set($event)"
-            [ngModelOptions]="{standalone: true}"
-            placeholder="Add new role"
-            class="flex-1 px-2 py-1 border rounded text-sm"
-          />
-          <button
-            type="button"
-            (click)="addNewRole()"
-            class="px-3 py-1 text-sm bg-red-900 text-white rounded hover:bg-black"
-          >
-            Add
-          </button>
-        </div>
-      </div>
-    </mat-select>
-    <mat-error *ngIf="employeeForm.get('role')?.invalid && employeeForm.get('role')?.touched">
-      Role is required
-    </mat-error>
-  </mat-form-field>
-
+  <!-- Password (only shown in add mode) -->
+  @if (data.mode === 'add') {
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" formControlName="password" placeholder="Enter password" />
+      <mat-error *ngIf="employeeForm.get('password')?.invalid && employeeForm.get('password')?.touched">
+        Password is required
+      </mat-error>
+    </mat-form-field>
+  }
   
   <div class="flex justify-end space-x-3 pt-4">
     <button
@@ -154,30 +125,32 @@ import { MatSelect } from '@angular/material/select';
     MatOptionModule,
     MatError,
     MatLabel,
-    MatSelect,
-    MatOption,
     MatFormField
-]
+  ]
 })
 export class EmployeeDialogComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<EmployeeDialogComponent>);
   private formBuilder = inject(FormBuilder);
   private organizationsService = inject(OrganizationsService);
-  private rolesService = inject(RolesService);
+
   data: DialogData<Employee> = inject(MAT_DIALOG_DATA);
   
   organizations = signal<Organization[]>([]);
-  roles = signal<Role[]>([]);
-  newRole = signal<string>('');
   
-  employeeForm: FormGroup = this.formBuilder.group({
-    username: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    organisation: ['', Validators.required],
-    role: ['user', Validators.required]
-  });
+  employeeForm!: FormGroup;
 
   ngOnInit(): void {
+    // Create form group 
+    this.employeeForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      login: ['', Validators.required]
+    });
+
+    if (this.data.mode === 'add') {
+      this.employeeForm.addControl('password', this.formBuilder.control('', Validators.required));
+    }
+
     // organizations
     this.organizationsService.getOrganizationsPaginated({
       page: 1,
@@ -191,34 +164,21 @@ export class EmployeeDialogComponent implements OnInit {
       }
     });
 
-    //roles
-    this.rolesService.getRoles().subscribe({
-      next: (roles) => {
-        this.roles.set(roles);
-      }
-    });
-
     if (this.data.mode === 'edit' && this.data.data) {
-      this.employeeForm.patchValue(this.data.data);
+      console.log('Edit Data:', this.data.data);
+      const formData = {
+        name: this.data.data.name,
+        email: this.data.data.email,
+        login: this.data.data.login || this.data.data.name,
+        role: this.data.data.role,
+        OrgId: this.data.data.OrgId
+      };
+      console.log('Form Data:', formData);
+      this.employeeForm.patchValue(formData);
     }
   }
-  
-  addNewRole(): void {
-    if (this.newRole()) {
-      const roleExists = this.roles().some(role => role.name === this.newRole());
-      if (!roleExists) {
-        this.rolesService.createRole({
-          name: this.newRole(),
-          description: `Custom role: ${this.newRole()}`
-        }).subscribe({
-          next: (newRole) => {
-            this.roles.update(roles => [...roles, newRole]);
-            this.newRole.set('');
-          }
-        });
-      }
-    }
-  }
+
+
 
   onSubmit(): void {
     if (this.employeeForm.valid) {

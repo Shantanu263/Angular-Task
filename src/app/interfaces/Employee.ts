@@ -1,10 +1,12 @@
-export type EmployeeRole = 'admin' | 'user' | 'manager';
+export type EmployeeRole = 'Admin' | 'Editor' | 'Viewer';
 
 export interface Employee {
   id?: number;
-  username: string;
+  name: string;
   email: string;
   organisation: string;
+  OrgId: number;  // Added for form mapping
+  login: string;  // Added login field
   role: EmployeeRole;
   createdAt?: string;
   updatedAt?: string;
@@ -27,6 +29,22 @@ export interface PaginationParams {
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
   search?: string;
+}
+
+export interface EmployeeOrganizationAssignment {
+  orgId: number;
+  name: string;
+  role: EmployeeRole;
+}
+
+export interface UserOrganizationData {
+  userId: number;
+  organizations: EmployeeOrganizationAssignment[];
+}
+
+export interface AssignOrganizationDto {
+  loginOrEmail: string;
+  role: EmployeeRole;
 }
 
 
